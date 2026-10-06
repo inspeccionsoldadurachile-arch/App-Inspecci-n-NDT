@@ -11,7 +11,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onSelectTab })
     { id: 'ruta', label: 'Ruta', icon: 'explore' },
     { id: 'aprender', label: 'Aprender', icon: 'menu_book' },
     { id: 'taller', label: 'Taller', icon: 'center_focus_strong' },
-    { id: 'certif', label: 'Certif.', icon: 'verified', fillable: true }
+    { id: 'avance', label: 'Avance', icon: 'monitoring', fillable: true }
   ];
 
   return (

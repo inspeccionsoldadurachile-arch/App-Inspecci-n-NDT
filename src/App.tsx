@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
-import { CertificatesScreen } from './components/screens/CertificatesScreen';
+import { LearningProgressScreen } from './components/screens/LearningProgressScreen';
 import { TallerScreen } from './components/screens/TallerScreen';
 import { AprenderScreen } from './components/screens/AprenderScreen';
 import { RutaScreen } from './components/screens/RutaScreen';
 import { QrCredentialModal } from './components/modals/QrCredentialModal';
 import { SafetyPassModal } from './components/modals/SafetyPassModal';
 import { LogbookModal } from './components/modals/LogbookModal';
-import { CertificateDetailModal } from './components/modals/CertificateDetailModal';
+import { LessonDetailModal } from './components/modals/LessonDetailModal';
+import { WeaknessTrainingModal } from './components/modals/WeaknessTrainingModal';
 import { BadgeDetailModal } from './components/modals/BadgeDetailModal';
 import { EditProfileModal } from './components/modals/EditProfileModal';
 import {
   INITIAL_PROFILE,
-  INITIAL_CERTIFICATES,
+  INITIAL_LESSONS,
+  INITIAL_WEAKNESSES,
+  COGNITIVE_METRICS,
   INITIAL_LOGBOOK,
   INITIAL_BADGES
 } from './data/mockData';
-import { ScreenTab, Certificate, Badge, LogbookEntry, InspectorProfile } from './types';
+import { ScreenTab, Lesson, WeaknessTopic, Badge, LogbookEntry, InspectorProfile } from './types';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<ScreenTab>('certif');
+  const [currentTab, setCurrentTab] = useState<ScreenTab>('avance');
   const [profile, setProfile] = useState<InspectorProfile>(INITIAL_PROFILE);
-  const [certificates, setCertificates] = useState<Certificate[]>(INITIAL_CERTIFICATES);
+  const [lessons, setLessons] = useState<Lesson[]>(INITIAL_LESSONS);
+  const [weaknesses, setWeaknesses] = useState<WeaknessTopic[]>(INITIAL_WEAKNESSES);
+  const [cognitiveMetrics, setCognitiveMetrics] = useState(COGNITIVE_METRICS);
   const [logbook, setLogbook] = useState<LogbookEntry[]>(INITIAL_LOGBOOK);
   const [badges, setBadges] = useState<Badge[]>(INITIAL_BADGES);
 
@@ -31,7 +36,8 @@ export default function App() {
   const [isSafetyPassModalOpen, setIsSafetyPassModalOpen] = useState(false);
   const [isLogbookModalOpen, setIsLogbookModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [selectedWeakness, setSelectedWeakness] = useState<WeaknessTopic | null>(null);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
 
   // Toast notification for user actions & XP
@@ -50,6 +56,63 @@ export default function App() {
       xp: prev.xp + amount
     }));
     showToast(`+${amount} XP: ${reason}`);
+  };
+
+  const handleCompleteLessonQuiz = (lessonId: string, passed: boolean) => {
+    setLessons((prev) =>
+      prev.map((l) => {
+        if (l.id === lessonId) {
+          const newScore = passed ? Math.min(100, (l.score || 70) + 15) : l.score;
+          const newWeaknessScore = passed ? Math.min(100, l.weaknessScore + 18) : l.weaknessScore;
+          return {
+            ...l,
+            score: newScore,
+            weaknessScore: newWeaknessScore,
+            status: newWeaknessScore >= 80 ? 'completada' : l.status,
+            progressPercent: passed ? 100 : l.progressPercent
+          };
+        }
+        return l;
+      })
+    );
+
+    if (passed) {
+      handleEarnXp(30, 'Test de refuerzo superado exitosamente');
+    } else {
+      showToast('Respuesta incorrecta. Revisa el fundamento técnico.');
+    }
+  };
+
+  const handleBoostWeaknessMastery = (weaknessId: string) => {
+    setWeaknesses((prev) =>
+      prev.map((w) => {
+        if (w.id === weaknessId) {
+          const newMastery = Math.min(100, w.masteryPercent + 22);
+          return {
+            ...w,
+            masteryPercent: newMastery,
+            severity: newMastery >= 75 ? 'optima' : 'moderada',
+            errorCount: Math.max(0, w.errorCount - 2)
+          };
+        }
+        return w;
+      })
+    );
+
+    // Also update corresponding lesson
+    setLessons((prev) =>
+      prev.map((l) => {
+        if (weaknessId === 'weak-1' && l.code.includes('MT')) {
+          return { ...l, weaknessScore: Math.min(100, l.weaknessScore + 20), status: 'en_progreso' };
+        }
+        if (weaknessId === 'weak-2' && l.code.includes('PT')) {
+          return { ...l, weaknessScore: Math.min(100, l.weaknessScore + 20), status: 'en_progreso' };
+        }
+        return l;
+      })
+    );
+
+    handleEarnXp(35, 'Brecha crítica reducida mediante entrenamiento focalizado');
   };
 
   const handleAddLogbookEntry = (newEntry: Omit<LogbookEntry, 'id'>) => {
@@ -88,17 +151,20 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col relative w-full pt-[76px] pb-24 bg-[#081423] min-h-screen">
-        {currentTab === 'certif' && (
-          <CertificatesScreen
+        {currentTab === 'avance' && (
+          <LearningProgressScreen
             profile={profile}
-            certificates={certificates}
+            lessons={lessons}
+            weaknesses={weaknesses}
+            cognitiveMetrics={cognitiveMetrics}
             logbook={logbook}
             badges={badges}
             onOpenQr={() => setIsQrModalOpen(true)}
             onOpenSafetyPass={() => setIsSafetyPassModalOpen(true)}
             onOpenLogbook={() => setIsLogbookModalOpen(true)}
             onOpenEditProfile={() => setIsEditProfileModalOpen(true)}
-            onSelectCertificate={(cert) => setSelectedCertificate(cert)}
+            onSelectLesson={(lesson) => setSelectedLesson(lesson)}
+            onTrainWeakness={(weakness) => setSelectedWeakness(weakness)}
             onSelectBadge={(badge) => setSelectedBadge(badge)}
           />
         )}
@@ -146,11 +212,18 @@ export default function App() {
         onAddEntry={handleAddLogbookEntry}
       />
 
-      <CertificateDetailModal
-        certificate={selectedCertificate}
-        profile={profile}
-        isOpen={!!selectedCertificate}
-        onClose={() => setSelectedCertificate(null)}
+      <LessonDetailModal
+        lesson={selectedLesson}
+        isOpen={!!selectedLesson}
+        onClose={() => setSelectedLesson(null)}
+        onCompleteQuiz={handleCompleteLessonQuiz}
+      />
+
+      <WeaknessTrainingModal
+        weakness={selectedWeakness}
+        isOpen={!!selectedWeakness}
+        onClose={() => setSelectedWeakness(null)}
+        onBoostMastery={handleBoostWeaknessMastery}
       />
 
       <BadgeDetailModal

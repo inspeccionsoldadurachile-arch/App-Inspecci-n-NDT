@@ -1,5 +1,5 @@
 import { ASSETS } from './assets';
-import { InspectorProfile, Certificate, LogbookEntry, Badge, QuizQuestion, RoadMapStep } from '../types';
+import { InspectorProfile, Lesson, WeaknessTopic, CognitiveMetric, LogbookEntry, Badge, QuizQuestion, RoadMapStep } from '../types';
 
 export const INITIAL_PROFILE: InspectorProfile = {
   name: "Matías Rojas C.",
@@ -22,75 +22,221 @@ export const INITIAL_PROFILE: InspectorProfile = {
   email: "m.rojas.ndt@inspeccionsoldadurachile.cl"
 };
 
-export const INITIAL_CERTIFICATES: Certificate[] = [
+export const INITIAL_LESSONS: Lesson[] = [
   {
-    id: "cert-vt-1",
-    title: "Inspección Visual Directa (VT Nivel I)",
-    code: "VT-101",
-    norm: "AWS D1.1 / ASME SEC. V ART. 9",
-    reg: "#CL-VT-2025-0419",
-    description: "Acreditado para evaluación de discontinuidades superficiales, socavación, porosidad lineal y verificación dimensional con galgas Cambridge / Hi-Lo.",
-    hours: "40 Horas Teórico/Práct.",
-    validity: "Ene 2025 – Ene 2028",
-    status: "aprobado",
-    iconUrl: ASSETS.iconVT,
-    issueDate: "15/01/2025",
-    expiryDate: "15/01/2028",
-    signedBy: "Ing. Rodrigo Palma C. - Asoc. NDT Chile Nivel III"
+    id: "les-1",
+    title: "Criterios Dimensionales y Tolerancia de Socavación",
+    code: "VT-MOD-01",
+    norm: "AWS D1.1:2020 Cláusula 6",
+    category: "Inspección Visual (VT)",
+    description: "Evaluación de socavaciones continuas y acumuladas en juntas sometidas a cargas estáticas vs dinámicas con galga Cambridge.",
+    status: "completada",
+    progressPercent: 100,
+    score: 96,
+    completedMinutes: 45,
+    totalMinutes: 45,
+    weaknessScore: 94,
+    frequencyErrorRate: "4% de error",
+    keyConcepts: ["Tabla 6.1 AWS", "Límite 1.0mm", "Acumulado 50mm en 300mm", "Galga Hi-Lo"],
+    summaryText: "Dominio verificado en calibración de galgas y límites de socavación para espesores t ≤ 25 mm.",
+    quizPrompt: {
+      question: "¿Cuál es la profundidad máxima permitida de socavación para miembros cargados estáticamente según AWS D1.1 Tabla 6.1?",
+      options: ["0.5 mm en todo el cordón", "1.0 mm para cualquier longitud, permitiendo hasta 1.6 mm por 50 mm acumulados en 300 mm", "3.0 mm máximo", "Cero tolerancia"],
+      correctIndex: 1,
+      explanation: "AWS D1.1 Tabla 6.1 permite hasta 1.0 mm, extendible a 1.6 mm por un acumulado de 50 mm en cada tramo de 300 mm."
+    }
   },
   {
-    id: "cert-pt-1",
-    title: "Líquidos Penetrantes Visibles & Fluorescentes",
-    code: "PT-202",
+    id: "les-2",
+    title: "Iluminación, Acceso Óptico y Calibración de Luxómetro",
+    code: "VT-MOD-02",
+    norm: "ASME Sec. V Art. 9 / T-952",
+    category: "Inspección Visual (VT)",
+    description: "Requisitos de iluminancia mínima en probeta (1000 lux), ángulo visual no menor a 30° y distancia máxima de 600 mm.",
+    status: "completada",
+    progressPercent: 100,
+    score: 98,
+    completedMinutes: 30,
+    totalMinutes: 30,
+    weaknessScore: 92,
+    frequencyErrorRate: "2% de error",
+    keyConcepts: ["1000 Lux mínimos", "Ángulo ≥ 30°", "Distancia ≤ 600 mm (24 in)", "Linterna luz blanca"],
+    summaryText: "Comprensión sólida de condiciones de visibilidad y requisitos de agudeza visual Jaeger 1.",
+    quizPrompt: {
+      question: "¿A qué distancia y ángulo máximo se permite realizar un examen visual directo según ASME Sec. V Art. 9?",
+      options: ["Distancia ≤ 600 mm y ángulo ≥ 30°", "Distancia ≤ 1000 mm y ángulo ≥ 45°", "Distancia ≤ 300 mm sin límite de ángulo", "A cualquier distancia con lupa"],
+      correctIndex: 0,
+      explanation: "ASME Sec. V Art. 9 especifica una distancia máxima de 600 mm (24 in) y un ángulo de visión no menor a 30 grados respecto a la superficie."
+    }
+  },
+  {
+    id: "les-3",
+    title: "Tiempos de Penetración y Secado de Solvente",
+    code: "PT-MOD-01",
     norm: "ASTM E165 / ISO 3452-1",
-    reg: "#CL-PT-2024-1182",
-    description: "Técnicas Tipo II Método C (Solvente Removible) y sensibilización por capilaridad en cordones de soldadura GTAW / SMAW.",
-    hours: "24 Horas Taller",
-    score: "98 / 100",
-    status: "aprobado",
-    iconUrl: ASSETS.iconPT,
-    issueDate: "04/11/2024",
-    expiryDate: "04/11/2027",
-    signedBy: "Dra. Carolina Méndez - Auditora AWS CWI"
+    category: "Líquidos Penetrantes (PT)",
+    description: "Determinación de Dwell Time según temperatura y viscosidad, prevención de sobre-lavado y tiempo de secado de revelador.",
+    status: "requiere_refuerzo",
+    progressPercent: 65,
+    score: 68,
+    completedMinutes: 35,
+    totalMinutes: 50,
+    weaknessScore: 62,
+    frequencyErrorRate: "32% de error",
+    keyConcepts: ["Dwell Time 10-20 min", "Temperatura 10°C-52°C", "Sobre-lavado crítico", "Revelador en suspensión"],
+    summaryText: "Se identificaron confusiones recurrentes en tiempos mínimos de escurrido de solvente y aplicación excesiva de paño abrasivo.",
+    quizPrompt: {
+      question: "¿Qué consecuencia produce aplicar el solvente removedor directamente en spray sobre la soldadura con penetrante?",
+      options: ["Acelera el revelado", "Lava el penetrante atrapado dentro de las fisuras superficiales produciendo falsos negativos", "Aumenta la sensibilidad capilar", "No tiene ningún efecto adverso"],
+      correctIndex: 1,
+      explanation: "El rociado directo de solvente extrae el penetrante de las discontinuidades, invalidando el ensayo y provocando falsos negativos críticos."
+    }
   },
   {
-    id: "cert-mt-1",
-    title: "Partículas Magnéticas (MT Nivel I/II)",
-    code: "MT-303",
-    norm: "ASME SEC. V ART. 7 / ASTM E709",
-    reg: "En desarrollo · Módulo 4 de 6",
-    description: "Inspección de materiales ferromagnéticos mediante yugo electromagnético portátil en corriente alterna y continua.",
-    hours: "32 Horas Especialidad",
-    status: "en_curso",
-    progressPercent: 68,
-    totalLessons: 50,
-    completedLessons: 34,
-    nextMilestone: "Simulacro Práctico: Ensayo con Galga Berthold y Pie Gauge",
-    iconUrl: ASSETS.iconMT
+    id: "les-4",
+    title: "Magnetización con Yugo Portátil y Capacidad de Sustentación",
+    code: "MT-MOD-01",
+    norm: "ASME Sec. V Art. 7 / ASTM E709",
+    category: "Partículas Magnéticas (MT)",
+    description: "Cálculo de campo magnético tangencial, prueba de levantamiento de 4.5 kg (AC) vs 18 kg (DC), y orientación de discontinuidades.",
+    status: "requiere_refuerzo",
+    progressPercent: 40,
+    score: 54,
+    completedMinutes: 20,
+    totalMinutes: 60,
+    weaknessScore: 48,
+    frequencyErrorRate: "46% de error",
+    keyConcepts: ["Levantamiento AC 4.5 kg (10 lb)", "Levantamiento DC 18 kg (40 lb)", "Galga de Torta / Berthold", "Campo Tangencial"],
+    summaryText: "Área de debilidad primaria: cálculo de separación entre polos y selección de corriente AC para defectos superficiales.",
+    quizPrompt: {
+      question: "¿Por qué se prefiere corriente alterna (AC) sobre continua (DC) para detectar fisuras superficiales por fatiga?",
+      options: ["Porque la corriente AC penetra hasta el fondo del cordón", "Por el 'efecto piel' que concentra el flujo magnético en la superficie de la pieza", "Porque la corriente AC consume menos energía", "Porque no produce chispas"],
+      correctIndex: 1,
+      explanation: "El efecto piel (skin effect) en AC concentra las líneas de flujo magnético en la superficie externa, maximizando el campo de fuga en fisuras muy finas."
+    }
   },
   {
-    id: "cert-ut-1",
-    title: "Ultrasonido Industrial y Haz Angular (UT)",
-    code: "UT-404",
-    norm: "ASME SEC. V ART. 4 / AWS D1.1 CLÁUSULA 6",
-    reg: "Inscripción confirmada",
-    description: "Detección de discontinuidades volumétricas internas, cálculo de atenuación acústica y dimensionamiento DGS.",
-    hours: "80 Horas Teórico/Práct.",
+    id: "les-5",
+    title: "Clasificación de Porosidad vs Inclusiones de Escoria",
+    code: "MET-MOD-02",
+    norm: "ISO 6520-1 / AWS D1.1",
+    category: "Metalurgia & Discontinuidades",
+    description: "Morfología de discontinuidades redondeadas vs alargadas, densidad admisible por pulgada lineal y causas en procesos SMAW.",
+    status: "en_progreso",
+    progressPercent: 75,
+    score: 82,
+    completedMinutes: 40,
+    totalMinutes: 50,
+    weaknessScore: 78,
+    frequencyErrorRate: "18% de error",
+    keyConcepts: ["Porosidad aislada vs agrupada", "Inclusión de escoria lineal", "Túnel de escoria", "Aporte térmico"],
+    summaryText: "Buen avance en morfología. Reforzar el cálculo de dispersión acumulada de poros en soldaduras de penetración completa.",
+    quizPrompt: {
+      question: "¿Cuál es la causa metalúrgica principal de la porosidad vermicular (wormhole porosity) en procesos SMAW?",
+      options: ["Uso de electrodos básicos sobrecalentados", "Contaminación grave por humedad o gas atrapado que escapa rápidamente durante la solidificación", "Exceso de velocidad de avance únicamente", "Ángulo de bisel muy abierto"],
+      correctIndex: 1,
+      explanation: "La porosidad vermicular se produce por emanación severa de gases atrapados en el baño de fusión debido a humedad en el fundente o grasa en el bisel."
+    }
+  },
+  {
+    id: "les-6",
+    title: "Elaboración de Informes NDT y Trazabilidad de No Conformidades",
+    code: "QA-MOD-01",
+    norm: "ASNT SNT-TC-1A / ISO 9712",
+    category: "Aseguramiento de Calidad (QA/QC)",
+    description: "Estructura legal de un reporte de inspección: croquis de ubicación, referencia de estacas, firma de validador y dictamen final.",
     status: "por_iniciar",
-    nextMilestone: "Inicio de cohorte: Próximo Lunes 12 de Octubre",
-    iconUrl: ASSETS.iconVT
+    progressPercent: 10,
+    score: 0,
+    completedMinutes: 5,
+    totalMinutes: 40,
+    weaknessScore: 70,
+    keyConcepts: ["Dictamen Conforme / No Conforme", "Croquis dimensional", "Trazabilidad de electrodo", "Firma Nivel II"],
+    summaryText: "Unidad introductoria para habilitar el reporte formal ante superintendencia de obras mineras.",
+    quizPrompt: {
+      question: "¿Qué elemento es mandatorio en un informe de ensayo no destructivo según SNT-TC-1A?",
+      options: ["Solo la firma del soldador", "Identificación única de la probeta/junta, procedimiento aplicado, resultados y firma del inspector calificado", "El costo de la reparación", "El certificado de nacimiento del inspector"],
+      correctIndex: 1,
+      explanation: "El informe debe contener identificación de la junta, norma aplicable, técnica, aceptación/rechazo y firma del inspector acreditado."
+    }
+  }
+];
+
+export const INITIAL_WEAKNESSES: WeaknessTopic[] = [
+  {
+    id: "weak-1",
+    topic: "Fuerza de Sustentación y Verificación de Yugo Magnético AC/DC",
+    norm: "ASME Sec. V Art. 7",
+    masteryPercent: 48,
+    severity: "critica",
+    errorCount: 6,
+    diagnosticNote: "Confusión reiterada entre el requisito de 4.5 kg para AC y 18 kg para DC a la separación máxima de polos. Dificultad para asociar el efecto piel.",
+    recommendation: "Realizar el simulador interactivo de Yugo en el Taller y repasar la regla de levantamiento con placa de peso calibrada.",
+    actionText: "Reforzar Yugo Magnético (+35 XP)"
   },
   {
-    id: "cert-rt-1",
-    title: "Interpretación Radiográfica de Soldaduras (RT)",
-    code: "RT-505",
-    norm: "ASME SEC. VIII DIV. 1 / API 1104",
-    reg: "Pre-requisito VT Aprobado (Cumplido)",
-    description: "Lectura y análisis de placas radiográficas en negatoscopio industrial con densitómetro óptico calibrado.",
-    hours: "48 Horas Laboratorio",
-    status: "por_iniciar",
-    nextMilestone: "Matrícula abierta para inspectores Nivel I",
-    iconUrl: ASSETS.iconPT
+    id: "weak-2",
+    topic: "Control de Tiempo de Escurrido y Secado en Líquidos Penetrantes",
+    norm: "ASTM E165 / ISO 3452",
+    masteryPercent: 62,
+    severity: "moderada",
+    errorCount: 4,
+    diagnosticNote: "Tendencia a apresurar el tiempo de emulsificación y secado previo al revelador en ambientes con temperatura inferior a 10°C.",
+    recommendation: "Completar los 5 pasos del simulador PT prestando atención al cronómetro de dwell time y prevención de sobrelavado.",
+    actionText: "Practicar Ensayo PT (+25 XP)"
+  },
+  {
+    id: "weak-3",
+    topic: "Cálculo de Porosidad Acumulada en Miembros Cíclicos",
+    norm: "AWS D1.1 Cláusula 6",
+    masteryPercent: 74,
+    severity: "moderada",
+    errorCount: 3,
+    diagnosticNote: "Omisión de la distancia mínima entre poros adyacentes para considerarlos discontinuidad agrupada o alineada.",
+    recommendation: "Revisar la ficha técnica de la Tabla 6.1 y la regla de 1 pulgada lineal de espaciamiento.",
+    actionText: "Repasar Criterios AWS (+20 XP)"
+  },
+  {
+    id: "weak-4",
+    topic: "Medición con Galga Cambridge de Socavación (Undercut)",
+    norm: "AWS D1.1 / ASME Art. 9",
+    masteryPercent: 94,
+    severity: "optima",
+    errorCount: 1,
+    diagnosticNote: "Excelente calibración motriz. Cero errores en lecturas dimensionales inferiores a 1.0 mm.",
+    recommendation: "Mantener la calibración periódica semanal en probetas de terreno.",
+    actionText: "Ver Detalle de Maestría"
+  }
+];
+
+export const COGNITIVE_METRICS: CognitiveMetric[] = [
+  {
+    title: "Velocidad de Diagnóstico",
+    value: "1m 14s",
+    subtext: "por probeta inspeccionada",
+    status: "optimo",
+    trend: "-18s vs mes anterior (Más ágil)"
+  },
+  {
+    title: "Tasa de Falsos Rechazos",
+    value: "4.8%",
+    subtext: "sobre-evaluación conservadora",
+    status: "estable",
+    trend: "Dentro del rango óptimo (<5%)"
+  },
+  {
+    title: "Retención Normativa (14d)",
+    value: "86.4%",
+    subtext: "memoria de fórmulas y tablas",
+    status: "optimo",
+    trend: "+6.2% gracias al simulador diario"
+  },
+  {
+    title: "Consistencia de Criterio",
+    value: "91.8%",
+    subtext: "coincidencia con Nivel III",
+    status: "optimo",
+    trend: "Apto para postular a Nivel II"
   }
 ];
 
